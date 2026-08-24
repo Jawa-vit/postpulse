@@ -1,8 +1,21 @@
 import type { AnalysisResult, ExtractResponse, SamplePost } from '../types';
 
-const API_BASE_URL = 
-  import.meta.env.VITE_API_URL || 
-  (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? '/api' : 'http://localhost:8000/api');
+const getApiBaseUrl = (): string => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  if (typeof window !== 'undefined') {
+    // If running on Vite dev server (port 5173), connect directly to local FastAPI server
+    if (window.location.port === '5173') {
+      return 'http://127.0.0.1:8000/api';
+    }
+    // In production or when served by backend, use relative /api
+    return '/api';
+  }
+  return 'http://127.0.0.1:8000/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const apiService = {
   /**
@@ -11,7 +24,7 @@ export const apiService = {
   async checkHealth(): Promise<boolean> {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
       const res = await fetch(`${API_BASE_URL}/health`, { 
         method: 'GET',
         signal: controller.signal 
@@ -36,7 +49,7 @@ export const apiService = {
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s hard client timeout
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
 
     try {
       const res = await fetch(`${API_BASE_URL}/extract`, {
@@ -55,7 +68,7 @@ export const apiService = {
     } catch (error: any) {
       clearTimeout(timeoutId);
       if (error.name === 'AbortError') {
-        throw new Error('Extraction timed out. You can paste or edit the text draft directly below.');
+        throw new Error('Extraction timed out. Backend is processing — you can also edit/paste directly.');
       }
       throw error;
     }
