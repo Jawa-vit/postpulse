@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, FileText, Sparkles, CheckCircle, ArrowRight, RefreshCw, FileCode, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { UploadCloud, FileText, Sparkles, CheckCircle, ArrowRight, RefreshCw, FileCode, CheckCircle2, Loader2, Image as ImageIcon } from 'lucide-react';
 import type { SamplePost } from '../types';
 import { apiService } from '../services/api';
 
@@ -35,7 +35,6 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
-  const [extractError, setExtractError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -66,7 +65,6 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
 
   const processFile = async (file: File) => {
     setSelectedFile(file);
-    setExtractError(null);
 
     if (file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
@@ -79,23 +77,35 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
 
     try {
       const res = await apiService.extractContent(file);
-      if (res.success && res.text) {
-        onTextChange(res.text);
+      if (res && res.text && res.text.trim()) {
+        onTextChange(res.text.trim());
         onMetaUpdate({
-          fileName: res.file_name,
-          fileType: res.file_type,
-          wordCount: res.word_count,
-          charCount: res.character_count,
-          engine: res.details?.engine || (res.file_type === 'pdf' ? 'PyMuPDF Parser' : 'Tesseract OCR')
+          fileName: res.file_name || file.name,
+          fileType: res.file_type || (file.type.includes('pdf') ? 'pdf' : 'image'),
+          wordCount: res.word_count || res.text.trim().split(/\s+/).length,
+          charCount: res.character_count || res.text.length,
+          engine: res.details?.engine || (file.type.includes('pdf') ? 'PyMuPDF Parser' : 'Windows AI OCR')
         });
-      } else if (res.text) {
-        // Fallback text available
-        onTextChange(res.text);
       } else {
-        setExtractError('No text found in file. You can type or paste your post below.');
+        // If image has no detectable text (or pure graphic), clear old stale sample so user can write their draft
+        onTextChange('');
+        onMetaUpdate({
+          fileName: file.name,
+          fileType: file.type.includes('pdf') ? 'pdf' : 'image',
+          wordCount: 0,
+          charCount: 0,
+          engine: 'Visual Attachment'
+        });
       }
-    } catch (err: any) {
-      setExtractError(err.message || 'Extraction failed. You can type or edit your draft below.');
+    } catch {
+      // Fallback
+      onMetaUpdate({
+        fileName: file.name,
+        fileType: file.type.includes('pdf') ? 'pdf' : 'image',
+        wordCount: 0,
+        charCount: 0,
+        engine: 'Document Attached'
+      });
     } finally {
       setIsExtracting(false);
     }
@@ -103,7 +113,6 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
-    setExtractError(null);
     if (filePreviewUrl) {
       URL.revokeObjectURL(filePreviewUrl);
       setFilePreviewUrl(null);
@@ -125,7 +134,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
 
   return (
     <div className="w-full glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800 relative overflow-hidden shadow-2xl space-y-6">
-      {/* Background Glow */}
+      {/* Ambient background glows */}
       <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -238,15 +247,15 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         <span>Extracting document text with fast OCR...</span>
                       </div>
-                    ) : extractError ? (
-                      <div className="flex items-center space-x-1.5 text-amber-400 text-xs">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        <span>{extractError}</span>
-                      </div>
-                    ) : (
+                    ) : extractedMeta && extractedMeta.wordCount > 0 ? (
                       <div className="flex items-center space-x-1.5 text-emerald-400 text-xs">
                         <CheckCircle className="w-3.5 h-3.5" />
-                        <span>Extracted & Synchronized</span>
+                        <span>Extracted {extractedMeta.wordCount} words via {extractedMeta.engine || 'OCR'}</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-1.5 text-sky-400 text-xs">
+                        <ImageIcon className="w-3.5 h-3.5" />
+                        <span>Document attached — you can edit or enter your post draft below.</span>
                       </div>
                     )}
                   </div>
@@ -273,10 +282,10 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
           <div className="flex items-center space-x-2 font-semibold text-slate-300">
             <FileCode className="w-4 h-4 text-indigo-400" />
             <span>Extracted Document Text / Editable Draft</span>
-            {extractedMeta && (
+            {extractedMeta && extractedMeta.wordCount > 0 && (
               <span className="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 font-mono">
                 <CheckCircle2 className="w-3 h-3" />
-                <span>Extracted via {extractedMeta.engine || 'Engine'}</span>
+                <span>{extractedMeta.engine || 'Engine'}</span>
               </span>
             )}
           </div>
@@ -289,7 +298,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
           <textarea
             value={currentText}
             onChange={(e) => onTextChange(e.target.value)}
-            placeholder="Document text will appear here automatically after upload, or you can write your draft directly..."
+            placeholder="Document text appears here automatically after upload. You can also write or edit your draft directly here..."
             rows={5}
             className="w-full bg-slate-900/90 text-slate-100 text-xs sm:text-sm rounded-xl p-4 border border-slate-700/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all resize-y placeholder-slate-500 font-sans leading-relaxed"
           />
