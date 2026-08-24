@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![PostPulse Banner](https://img.shields.io/badge/PostPulse-PRO_v1.0.0-6366F1?style=for-the-badge&logo=rocket&logoColor=white)
+![PostPulse PRO Banner](https://img.shields.io/badge/PostPulse-PRO_v1.0.0-6366F1?style=for-the-badge&logo=rocket&logoColor=white)
 [![Python Version](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18.0+-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
@@ -13,75 +13,141 @@
 
 <br />
 
-**Don't just analyze your content. Understand why it works.**
+### **"Don't just analyze your content. Understand why it works."**
 
-*PostPulse is an AI-powered social media content intelligence platform that reconstructs PDFs, mobile screenshots, and raw drafts into actionable digital twins — diagnosing retention friction, profiling Content DNA, and generating high-converting channel revisions.*
+*An AI-powered social media intelligence platform that ingests multi-page PDFs, mobile screenshots, and raw drafts to profile Content DNA, diagnose retention scroll risks, forecast reach deltas, and generate channel-tailored revisions.*
 
-[Explore Features](#-feature-showcase) • [Architecture](#-system-architecture) • [Quick Start](#-quick-start) • [Cloud Deployment](#-cloud-deployment) • [API Docs](#-api-reference)
+<br />
+
+[✨ Visual Product Tour](#-visual-product-tour) • [🏛️ System Architecture](#-system-architecture) • [🚀 Features](#-core-capabilities) • [⚡ Quick Start](#-quick-start-guide) • [🌐 Cloud Deployment](#-cloud-hosting--deployment) • [🧪 Testing](#-test-suite--quality-assurance)
 
 </div>
 
 ---
 
-## 🎯 Project Overview & Problem Statement
+<br />
 
-Most content tools are simple text counters. Creators, founders, and marketing teams often struggle to answer critical editorial questions:
-- *Why is my opening sentence causing users to scroll past within 2 seconds?*
-- *Is this draft calibrated for LinkedIn's professional algorithm or X's concise format?*
-- *How can I preserve my authentic voice while structuring my post for maximum dwell time?*
+## 🌟 Executive Summary & Problem Solved
 
-**PostPulse** solves this by combining **multi-format document ingestion (PDF + OCR)** with a **deterministic NLP analytics engine** that calculates readability, hook speed, and psychological drivers in **under 20 milliseconds**.
+Most creator tools act merely as basic character counters or superficial grammar checkers. They fail to address the critical algorithmic and psychological dynamics that determine content success on modern feeds:
 
----
+1. **The 3-Second Retention Window**: Why do 65%+ of mobile readers scroll past within the opening 2 sentences?
+2. **Multi-Format Ingestion Barrier**: How do you extract and analyze drafts locked inside PDFs, camera photos, or dark-mode screenshots?
+3. **Cross-Platform Tone Mismatch**: How do you recalibrate a single core idea into an authoritative LinkedIn post, a high-save Instagram carousel caption, and a punchy 3-part X (Twitter) thread without sounding robotic?
 
-## 📸 Visual Showcase
-
-### 1. Ingestion & Multi-Format OCR Engine
-> *Drag-and-drop any social media screenshot, multi-column PDF draft, or plain text.*
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│  [ Upload Document / Image ]   [ Direct Text Editor ]                  │
-│                                                                        │
-│  📁 {1B52BCB9-B425...}.png (345.9 KB)                                  │
-│  ✓ Extracted 79 words via Windows AI OCR (40ms)                       │
-│                                                                        │
-│  [ Extracted Document Text / Editable Draft ]                          │
-│  "30 LPA - 6 LPA = 24 LPA a year. Over 5 years, that is 1.2 crore..." │
-└────────────────────────────────────────────────────────────────────────┘
-```
-<div align="center">
-  <img src="assets/screenshots/01_hero_ingestion.png" alt="Ingestion & OCR Engine" width="95%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);" />
-</div>
+**PostPulse** delivers an end-to-end solution combining **PyMuPDF structural parsing**, **Windows Native & Tesseract OCR**, and a **sub-20ms deterministic NLP heuristics engine**.
 
 ---
 
-### 2. Executive Score Banner & Content DNA Profiling
-> *6-vector radar assessing Hook Strength, Readability, Skimmability, Sentiment, CTA, and Curiosity.*
+<br />
+
+## 📸 Visual Product Tour
+
+<br />
+
+### 1. Ingestion & Dual-Engine Document Extraction
+> *Drop multi-page PDF drafts or image screenshots. PostPulse automatically extracts and synchronizes document text in milliseconds.*
 
 <div align="center">
-  <img src="assets/screenshots/02_content_dna_scroll_risk.png" alt="Content DNA & Scroll Risk Scanner" width="95%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);" />
+  <img src="assets/screenshots/01_hero_and_ingestion.png" alt="Ingestion and Hero Header" width="96%" />
 </div>
+
+<br />
+
+**Key Capabilities in this View:**
+- **PyMuPDF Parser**: Preserves multi-column layout, headings, and document hierarchy.
+- **Universal Multi-Pass OCR**: Fast extraction for phone screenshots, WhatsApp photos, and dark-mode graphics.
+- **Live Ingestion Telemetry**: Real-time word count, character metrics, and engine status indicators.
+
+<br />
+<br />
 
 ---
 
-### 3. Context-Aware Platform Transformer
-> *Instant format recalibration for LinkedIn, Instagram, X (single + threads), and Threads.*
+<br />
+
+### 2. Extracted Text Draft Synchronizer & Preset Scenarios
+> *Review, edit, or test pre-configured benchmark posts with instant word/character telemetry.*
 
 <div align="center">
-  <img src="assets/screenshots/03_platform_transformer.png" alt="Platform Transformer" width="95%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);" />
+  <img src="assets/screenshots/02_pdf_ocr_extraction.png" alt="Extracted Document Text Editor" width="96%" />
 </div>
+
+<br />
+
+**Key Capabilities in this View:**
+- **Synchronized Text Editor**: Allows inline editorial refinement before triggering diagnostic profiling.
+- **Benchmark Presets**: One-click test scenarios for *Student ML Projects (Fluff)*, *SaaS Launches (Weak CTA)*, and *Corporate Announcements (High Scroll Risk)*.
+
+<br />
+<br />
 
 ---
 
-### 4. Revision Lab & Side-by-Side Visual Diff
-> *4 targeted writing strategies (Clean Polish, High Engagement, Authority & Case Study, Authentic Story) paired with editorial diagnostic rationales.*
+<br />
+
+### 3. Executive Score Banner, Content DNA Radar & Scroll Risk Scanner
+> *Comprehensive 6-vector algorithmic diagnostic evaluating reader psychology and opening friction.*
 
 <div align="center">
-  <img src="assets/screenshots/04_revision_lab_diff.png" alt="Revision Lab with Diff Viewer" width="95%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);" />
+  <img src="assets/screenshots/03_content_dna_and_scroll_risk.png" alt="Content DNA & Scroll Risk Scanner" width="96%" />
 </div>
 
+<br />
+
+**Key Capabilities in this View:**
+- **Executive Score Meter**: Radial predicted engagement potential calculated via heuristic modeling.
+- **6-Vector Content DNA**: Multi-dimensional scoring across **Hook Strength**, **Clarity & Flow**, **Emotional Impact**, **Readability Ease (Flesch Grade)**, **CTA Strength**, and **Originality**.
+- **Scroll Risk Scanner**: Forensic identification of opening preamble delays with 1-click **High-Converting Hook Replacements**.
+
+<br />
+<br />
+
 ---
+
+<br />
+
+### 4. Engagement Simulator & Reach Forecast
+> *Predictive heuristic model forecasting reach lift and impact deltas across all engagement vectors.*
+
+<div align="center">
+  <img src="assets/screenshots/04_engagement_simulator.png" alt="Engagement Simulator" width="96%" />
+</div>
+
+<br />
+
+**Key Capabilities in this View:**
+- **Lift in Reach Projection**: Compares original baseline against PostPulse-optimized copy (e.g., **+22% Lift in Reach**).
+- **Distribution Factor**: Estimated read-through multiplier (e.g., **2.4x read-through**).
+- **Impact Delta Table**: Granular breakdown of expected percentage gains in Hook Curiosity (+28%), Message Clarity (+14%), and CTA Conversion (+32%).
+
+<br />
+<br />
+
+---
+
+<br />
+
+### 5. Context-Aware Platform Transformer
+> *Audience-calibrated formatting tailored for LinkedIn, Instagram, X (Twitter), and Threads.*
+
+<div align="center">
+  <img src="assets/screenshots/05_platform_transformer.png" alt="Platform Transformer" width="96%" />
+</div>
+
+<br />
+
+**Key Capabilities in this View:**
+- **Algorithm Optimization**: Double spacing, bulleted insight observations, and engagement questions designed for dwell time.
+- **Context-Aware Intent Detection**: Intelligently classifies content into **Career Milestones**, **Technical Projects**, **Product Launches**, or **Educational Retrospectives**.
+- **1-Click Copy Action**: Ready-to-publish formatting with verified character counts.
+
+<br />
+<br />
+
+---
+
+<br />
 
 ## 🏛️ System Architecture
 
@@ -115,31 +181,40 @@ Most content tools are simple text counters. Creators, founders, and marketing t
 └─────────────────┘└─────────────────┘    └─────────────────┘└─────────────────┘
 ```
 
+<br />
+
 ---
 
-## ✨ Key Feature Highlights
+<br />
 
-| Module | Purpose | Technical Capability |
+## ✨ Core Capabilities & Matrix
+
+| Module | Purpose | Technical Implementation |
 | :--- | :--- | :--- |
-| **Universal OCR Extractor** | Image & Screenshot parsing | Dual-Engine: Windows Native AI OCR (sub-50ms) + Linux/Docker Tesseract OCR. |
 | **PyMuPDF Document Parser** | Multi-page PDF extraction | Preserves document block hierarchies, column structures, and headings. |
-| **Content DNA Profiler** | 6-Vector radar score | Evaluates Hook Strength, Readability, Skimmability, Sentiment, CTA, and Curiosity. |
+| **Universal OCR Engine** | Image & Screenshot parsing | Dual-Engine: Windows Native AI OCR (sub-50ms) + Linux/Docker Tesseract OCR. |
+| **Content DNA Profiler** | 6-Vector algorithmic score | Evaluates Hook Strength, Readability, Skimmability, Sentiment, CTA, and Curiosity. |
 | **Scroll Risk Scanner** | Retention friction detection | Calculates opening sentence delay and generates 3 actionable hook replacements. |
 | **Platform Transformer** | Cross-channel optimization | Calibrates formatting for LinkedIn, Instagram, X (with 3-part thread), and Threads. |
-| **Revision Lab** | Multi-strategy copy rewriting | 4 Personas (*Clean Polish*, *High Engagement*, *Authority & Case Study*, *Authentic Story*) with Before/After Diff. |
-| **Executive Scorecard** | Reporting & Export | Printable executive scorecard with copy-to-clipboard markdown summary. |
+| **Revision Lab** | Multi-strategy copy rewriting | 4 Personas (*Clean Polish*, *High Engagement*, *Authority*, *Authentic Story*) with Before/After Diff. |
+| **Engagement Simulator** | Distribution forecasting | Computes projected reach lift and vector-by-vector impact deltas. |
+
+<br />
 
 ---
+
+<br />
 
 ## ⚡ Quick Start Guide
 
 ### Prerequisites
-- Python 3.9+ installed
-- Node.js 18+ and npm installed
+- **Python 3.9+** installed
+- **Node.js 18+** and **npm** installed
 
-### 1. Clone & Set Up Backend
+<br />
+
+### 1. Set Up & Run Backend
 ```bash
-# Navigate to backend directory
 cd backend
 
 # Create and activate virtual environment
@@ -156,14 +231,16 @@ pip install -r requirements.txt
 # Start FastAPI server
 uvicorn app.main:app --reload --port 8000
 ```
-API will be live at `http://localhost:8000` (Interactive OpenAPI Swagger Docs at `http://localhost:8000/docs`).
+Backend API will be live at `http://localhost:8000` (Interactive Swagger Docs at `http://localhost:8000/docs`).
+
+<br />
 
 ### 2. Set Up & Run Frontend
 ```bash
-# In a new terminal, navigate to frontend directory
+# In a new terminal window:
 cd frontend
 
-# Install Node packages
+# Install Node dependencies
 npm install
 
 # Start Vite development server
@@ -171,11 +248,15 @@ npm run dev
 ```
 Open `http://localhost:5173` in your browser.
 
+<br />
+
 ---
 
-## 🌐 Cloud Deployment (Render 1-Click)
+<br />
 
-PostPulse includes a production-ready multi-stage `Dockerfile` and `render.yaml` that builds the React frontend and FastAPI backend into a single unified container:
+## 🌐 Cloud Hosting & Deployment
+
+PostPulse is pre-configured with a multi-stage `Dockerfile` and `render.yaml` that builds the React frontend and Python backend into a single unified container:
 
 1. Push your repository to GitHub:
    ```bash
@@ -184,12 +265,16 @@ PostPulse includes a production-ready multi-stage `Dockerfile` and `render.yaml`
    git push origin main
    ```
 2. Go to [render.com](https://render.com) → **New Web Service** → Connect your `postpulse` repository.
-3. Select **Docker** runtime and click **Deploy Web Service**.
+3. Select **Docker** environment and click **Deploy Web Service**.
 4. Your application will be live at `https://your-app.onrender.com` in 2 minutes!
 
-*(See [`DEPLOYMENT.md`](DEPLOYMENT.md) for full deployment instructions).*
+*(See [`DEPLOYMENT.md`](DEPLOYMENT.md) for step-by-step instructions).*
+
+<br />
 
 ---
+
+<br />
 
 ## 🧪 Test Suite & Quality Assurance
 
@@ -218,22 +303,13 @@ tests/test_extractors.py::test_ocr_extractor_handles_empty_or_generated_image PA
 ======================= 13 passed in 0.73s ===================================
 ```
 
----
-
-## 📡 API Reference
-
-| Endpoint | Method | Description |
-| :--- | :--- | :--- |
-| `/api/health` | `GET` | System health check and OCR engine status. |
-| `/api/extract` | `POST` | Ingests PDF or Image file (`multipart/form-data`) and returns structured text. |
-| `/api/analyze` | `POST` | Computes Content DNA, Scroll Risk, Simulation, and Platform formats. |
-| `/api/rewrite` | `POST` | Generates 4 strategy rewrites (*Clean*, *Viral*, *Expert*, *Human*). |
-| `/api/transform` | `POST` | Re-calibrates draft for specific platform (LinkedIn, IG, X, Threads). |
-| `/api/sample-posts` | `GET` | Retrieves pre-configured benchmark posts. |
+<br />
 
 ---
 
-## 📄 License & Assessment Approach
+<br />
+
+## 📄 License & Approach Document
 
 - **Approach Document**: See [`APPROACH.md`](APPROACH.md) for the 189-word technical design write-up.
 - **MIT License** — Built with pride for the Technical Software Engineering Assessment.
