@@ -19,7 +19,7 @@
 
 <br />
 
-> 🌐 **Live Working Application**: [https://postpulse.onrender.com](https://postpulse.onrender.com)  
+> 🌐 **Live Working Application**: [https://postpulse-1qjk.onrender.com](https://postpulse-1qjk.onrender.com)  
 > 📖 **Interactive Swagger API Docs**: [https://postpulse.onrender.com/docs](https://postpulse.onrender.com/docs)
 
 <br />
