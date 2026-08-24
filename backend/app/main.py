@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -7,14 +7,15 @@ from app.core.config import settings
 from app.api.routes import router as api_router
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
+    title="PostPulse API",
     version=settings.VERSION,
-    description="PostPulse — Social Media Content Intelligence & Analytics Platform API",
+    description="PostPulse — Social Media Content Intelligence & Distribution Platform API",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
 
-# Enable CORS for cross-origin frontend support
+# Enable CORS for cross-origin frontend support (Vercel + Local + Render)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,10 +24,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Mount API router
+# Mount API router at /api
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
-# Determine static frontend dist path
+# Determine static frontend dist path if bundled together
 potential_dist_paths = [
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../frontend/dist")),
     os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/dist")),
@@ -46,25 +47,32 @@ if dist_dir:
     if os.path.exists(assets_dir):
         app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
-    @app.get("/{full_path:path}")
+    @app.get("/{full_path:path}", include_in_schema=False)
     async def serve_spa(full_path: str):
-        # Don't intercept API routes or Docs
-        if full_path.startswith("api") or full_path.startswith("docs") or full_path.startswith("redoc") or full_path.startswith("openapi.json"):
-            return None
+        # Allow FastAPI to handle API, Swagger docs, Redoc and OpenAPI spec directly
+        if (
+            full_path in ["docs", "redoc", "openapi.json"]
+            or full_path.startswith("api")
+            or full_path.startswith("docs/")
+            or full_path.startswith("redoc/")
+        ):
+            raise HTTPException(status_code=404, detail="Not Found")
             
         file_path = os.path.join(dist_dir, full_path)
         if os.path.exists(file_path) and os.path.isfile(file_path):
             return FileResponse(file_path)
         return FileResponse(os.path.join(dist_dir, "index.html"))
 else:
-    @app.get("/")
+    @app.get("/", include_in_schema=False)
     def root():
         return {
             "service": "PostPulse Content Intelligence API",
             "status": "healthy",
-            "docs": "/docs",
-            "health": "/api/health",
-            "note": "Frontend build not detected in dist/. Run 'npm run build' inside frontend/ to serve the unified app."
+            "version": "1.0.0",
+            "interactive_docs": "/docs",
+            "redoc": "/redoc",
+            "openapi_spec": "/openapi.json",
+            "health_check": "/api/health"
         }
 
 if __name__ == "__main__":

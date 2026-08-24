@@ -3,13 +3,12 @@
 <div align="center">
 
 ![PostPulse PRO Banner](https://img.shields.io/badge/PostPulse-PRO_v1.0.0-6366F1?style=for-the-badge&logo=rocket&logoColor=white)
-[![Live Demo on Render](https://img.shields.io/badge/Live_Demo-Render_Deployment-10B981?style=for-the-badge&logo=render&logoColor=white)](https://postpulse.onrender.com)
-[![Python Version](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Live on Vercel](https://img.shields.io/badge/Live_App-Vercel_Edge-black?style=for-the-badge&logo=vercel&logoColor=white)](https://postpulse-three.vercel.app)
+[![API on Render](https://img.shields.io/badge/Live_API-Render_Cloud-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://postpulse.onrender.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18.0+-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
-[![Tests](https://img.shields.io/badge/Pytest-13%2F13_Passing-success?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org)
+[![Pytest](https://img.shields.io/badge/Pytest-13%2F13_Passing-success?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org)
 
 <br />
 
@@ -19,8 +18,11 @@
 
 <br />
 
-> 🌐 **Live Working Application**: [https://postpulse-1qjk.onrender.com](https://postpulse-1qjk.onrender.com)  
-> 📖 **Interactive Swagger API Docs**: [https://postpulse.onrender.com/docs](https://postpulse.onrender.com/docs)
+| Resource | Live Link | Description |
+| :--- | :--- | :--- |
+| 🚀 **Live Production App (Vercel)** | [**postpulse-three.vercel.app**](https://postpulse-three.vercel.app/) | Global Edge-deployed React frontend UI |
+| ⚡ **Backend Cloud Service (Render)** | [**postpulse-1qjk.onrender.com**](https://postpulse-1qjk.onrender.com) | FastAPI Content Intelligence microservice |
+| 📖 **Interactive Swagger Docs** | [**postpulse-1qjk.onrender.com/docs**](https://postpulse-1qjk.onrender.com/docs) | OpenAPI interactive endpoints & schemas |
 
 <br />
 
