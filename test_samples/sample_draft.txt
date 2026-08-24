@@ -1,0 +1,4 @@
+I am happy to announce that we just launched our new developer platform.
+Over the last quarter, we listened to feedback from over 500 engineers.
+We simplified our API endpoints, added interactive documentation, and reduced onboarding time to 3 minutes.
+Let me know if you would like beta access!
