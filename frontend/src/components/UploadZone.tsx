@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, FileText, Sparkles, CheckCircle, ArrowRight, RefreshCw, FileCode, CheckCircle2 } from 'lucide-react';
+import { UploadCloud, FileText, Sparkles, CheckCircle, ArrowRight, RefreshCw, FileCode, CheckCircle2, Loader2 } from 'lucide-react';
 import type { SamplePost } from '../types';
+import { apiService } from '../services/api';
 
 interface UploadZoneProps {
-  onAnalyze: (text: string, file?: File) => void;
+  onAnalyze: (text: string) => void;
   isAnalyzing: boolean;
   samplePosts: SamplePost[];
   onSelectSample: (sample: SamplePost) => void;
@@ -16,6 +17,7 @@ interface UploadZoneProps {
     charCount: number;
     engine?: string;
   } | null;
+  onMetaUpdate: (meta: any) => void;
 }
 
 export const UploadZone: React.FC<UploadZoneProps> = ({
@@ -25,12 +27,14 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
   onSelectSample,
   currentText,
   onTextChange,
-  extractedMeta
+  extractedMeta,
+  onMetaUpdate
 }) => {
   const [activeTab, setActiveTab] = useState<'upload' | 'text'>('upload');
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
+  const [isExtracting, setIsExtracting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -59,13 +63,33 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
     }
   };
 
-  const processFile = (file: File) => {
+  const processFile = async (file: File) => {
     setSelectedFile(file);
     if (file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
       setFilePreviewUrl(url);
     } else {
       setFilePreviewUrl(null);
+    }
+
+    // Auto-extract immediately on upload so analysis is instant!
+    setIsExtracting(true);
+    try {
+      const res = await apiService.extractContent(file);
+      if (res.success && res.text) {
+        onTextChange(res.text);
+        onMetaUpdate({
+          fileName: res.file_name,
+          fileType: res.file_type,
+          wordCount: res.word_count,
+          charCount: res.character_count,
+          engine: res.details?.engine || (res.file_type === 'pdf' ? 'PyMuPDF Parser' : 'Tesseract OCR')
+        });
+      }
+    } catch {
+      // User can still type or edit directly
+    } finally {
+      setIsExtracting(false);
     }
   };
 
@@ -78,12 +102,11 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    onMetaUpdate(null);
   };
 
   const handleSubmit = () => {
-    if (activeTab === 'upload' && selectedFile) {
-      onAnalyze(currentText, selectedFile);
-    } else if (currentText.trim()) {
+    if (currentText.trim()) {
       onAnalyze(currentText);
     }
   };
@@ -93,9 +116,9 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
 
   return (
     <div className="w-full glass-panel rounded-2xl p-6 sm:p-8 border border-slate-800 relative overflow-hidden shadow-2xl space-y-6">
-      {/* Background Decorative Glow */}
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Background Glow */}
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header & Tabs */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
@@ -104,7 +127,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
             <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               Content Ingestion & Extraction Engine
             </h2>
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-mono border border-violet-500/30">
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">
               PDF & OCR Ready
             </span>
           </div>
@@ -120,7 +143,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
             onClick={() => setActiveTab('upload')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
               activeTab === 'upload'
-                ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -132,7 +155,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
             onClick={() => setActiveTab('text')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
               activeTab === 'text'
-                ? 'bg-violet-600 text-white shadow-md shadow-violet-600/30'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -162,11 +185,11 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
               onClick={() => fileInputRef.current?.click()}
               className={`border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center cursor-pointer transition-all duration-300 ${
                 dragActive
-                  ? 'border-violet-500 bg-violet-500/10 scale-[1.01]'
-                  : 'border-slate-700/80 hover:border-violet-500/50 bg-slate-900/50 hover:bg-slate-900/80'
+                  ? 'border-indigo-500 bg-indigo-500/10 scale-[1.01]'
+                  : 'border-slate-700/80 hover:border-indigo-500/50 bg-slate-900/50 hover:bg-slate-900/80'
               }`}
             >
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-violet-600/20 to-indigo-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-indigo-600/20 to-cyan-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
                 <UploadCloud className="w-7 h-7" />
               </div>
               <h3 className="text-base font-semibold text-white mb-1">
@@ -175,7 +198,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
               <p className="text-xs text-slate-400 max-w-md mx-auto mb-3">
                 Supports Instagram/LinkedIn screenshots, multi-column PDFs, or scanned documents.
               </p>
-              <div className="inline-flex items-center space-x-2 text-xs font-medium text-violet-300 bg-violet-500/10 px-3.5 py-1.5 rounded-full border border-violet-500/20">
+              <div className="inline-flex items-center space-x-2 text-xs font-medium text-indigo-300 bg-indigo-500/10 px-3.5 py-1.5 rounded-full border border-indigo-500/20">
                 <span>Browse Local Files</span>
                 <span className="text-slate-500">•</span>
                 <span className="text-slate-400">PDF, PNG, JPG, WEBP</span>
@@ -191,7 +214,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
                     className="w-16 h-16 object-cover rounded-lg border border-slate-700 shadow-md"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-lg bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400">
+                  <div className="w-16 h-16 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
                     <FileText className="w-8 h-8" />
                   </div>
                 )}
@@ -201,8 +224,17 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
                     {(selectedFile.size / 1024).toFixed(1)} KB • {selectedFile.type || 'Document'}
                   </div>
                   <div className="flex items-center space-x-1.5 text-[11px] text-emerald-400 mt-1">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Loaded • Click 'Analyze & Profile Post' below</span>
+                    {isExtracting ? (
+                      <div className="flex items-center space-x-1.5 text-indigo-400">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Extracting document text...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-1.5 text-emerald-400">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        <span>Extracted & Synchronized</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -221,11 +253,11 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
         </div>
       )}
 
-      {/* Extracted / Current Content Preview (Beautiful, aligned & editable) */}
+      {/* Extracted / Current Content Preview */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center space-x-2 font-semibold text-slate-300">
-            <FileCode className="w-4 h-4 text-violet-400" />
+            <FileCode className="w-4 h-4 text-indigo-400" />
             <span>Extracted Document Text / Editable Draft</span>
             {extractedMeta && (
               <span className="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded-full flex items-center gap-1 font-mono">
@@ -245,16 +277,16 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
             onChange={(e) => onTextChange(e.target.value)}
             placeholder="Document text will appear here automatically after upload, or you can write your draft directly..."
             rows={5}
-            className="w-full bg-slate-900/90 text-slate-100 text-xs sm:text-sm rounded-xl p-4 border border-slate-700/80 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none transition-all resize-y placeholder-slate-500 font-sans leading-relaxed"
+            className="w-full bg-slate-900/90 text-slate-100 text-xs sm:text-sm rounded-xl p-4 border border-slate-700/80 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all resize-y placeholder-slate-500 font-sans leading-relaxed"
           />
         </div>
       </div>
 
-      {/* Quick Test Presets */}
+      {/* Quick Test Presets & Action Button */}
       <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-slate-400 font-medium flex items-center gap-1 mr-1">
-            <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
             <span>Quick Test Presets:</span>
           </span>
           {samplePosts.map((sample) => (
@@ -262,7 +294,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
               key={sample.id}
               type="button"
               onClick={() => onSelectSample(sample)}
-              className="text-xs bg-slate-900 hover:bg-violet-600/15 text-slate-300 hover:text-violet-300 border border-slate-800 hover:border-violet-500/40 px-3 py-1.5 rounded-lg transition-all font-medium"
+              className="text-xs bg-slate-900 hover:bg-indigo-600/15 text-slate-300 hover:text-indigo-300 border border-slate-800 hover:border-indigo-500/40 px-3 py-1.5 rounded-lg transition-all font-medium"
             >
               {sample.title}
             </button>
@@ -273,11 +305,11 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isAnalyzing || (!selectedFile && !currentText.trim())}
+          disabled={isAnalyzing || isExtracting || !currentText.trim()}
           className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 shadow-xl shrink-0 ${
-            isAnalyzing || (!selectedFile && !currentText.trim())
+            isAnalyzing || isExtracting || !currentText.trim()
               ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-              : 'bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] cursor-pointer'
+              : 'bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] cursor-pointer'
           }`}
         >
           {isAnalyzing ? (

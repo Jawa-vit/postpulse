@@ -104,20 +104,18 @@ export const PlatformTransformer: React.FC<PlatformTransformerProps> = ({ platfo
         </div>
 
         {/* Social Mockup Preview Frame */}
-        <div className="bg-slate-950/80 rounded-xl p-5 border border-slate-800/90 font-sans shadow-inner">
-          {/* Clean Author Header */}
-          <div className="flex items-center space-x-3 mb-4 pb-3 border-b border-slate-900">
-            <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 font-bold text-xs">
-              ME
+        <div className="bg-slate-950/90 rounded-xl p-5 sm:p-6 border border-slate-800 font-sans shadow-inner">
+          {/* Clean Channel Status Header */}
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/80">
+            <div className="flex items-center space-x-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <span className="text-xs font-bold text-white uppercase tracking-wider">
+                {activePlatform === 'linkedin' ? 'LinkedIn Post Format' : activePlatform === 'instagram' ? 'Instagram Caption Format' : activePlatform === 'twitter' ? 'X / Twitter Post Format' : 'Threads Post Format'}
+              </span>
             </div>
-            <div>
-              <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                <span>Your Name / Channel</span>
-              </div>
-              <div className="text-[11px] text-slate-400">
-                {activePlatform === 'linkedin' ? 'Professional Update' : 'Social Draft Preview'}
-              </div>
-            </div>
+            <span className="text-[11px] font-mono text-slate-400 bg-slate-900 px-2.5 py-0.5 rounded-md border border-slate-800">
+              Ready to Publish
+            </span>
           </div>
 
           {/* Render Content */}

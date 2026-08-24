@@ -59,32 +59,13 @@ export function App() {
     setErrorMessage(null);
   };
 
-  const handleAnalyze = async (text: string, file?: File) => {
+  const handleAnalyze = async (text: string) => {
     setIsAnalyzing(true);
     setErrorMessage(null);
 
     try {
-      let textToAnalyze = text;
-
-      // If file uploaded, run extract first
-      if (file) {
-        const extractRes = await apiService.extractContent(file);
-        if (extractRes.success && extractRes.text) {
-          textToAnalyze = extractRes.text;
-          setCurrentText(textToAnalyze);
-          setExtractedMeta({
-            fileName: extractRes.file_name,
-            fileType: extractRes.file_type,
-            wordCount: extractRes.word_count,
-            charCount: extractRes.character_count,
-            engine: extractRes.details?.engine || (extractRes.file_type === 'pdf' ? 'PyMuPDF Parser' : 'Tesseract OCR')
-          });
-        } else if (extractRes.error) {
-          throw new Error(extractRes.error);
-        }
-      }
-
-      if (!textToAnalyze.trim()) {
+      const textToAnalyze = text.trim();
+      if (!textToAnalyze) {
         throw new Error('No readable text found in document or input.');
       }
 
@@ -172,6 +153,7 @@ export function App() {
           currentText={currentText}
           onTextChange={setCurrentText}
           extractedMeta={extractedMeta}
+          onMetaUpdate={setExtractedMeta}
         />
 
         {/* Analysis Dashboard Section */}
