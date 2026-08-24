@@ -3,19 +3,24 @@
 <div align="center">
 
 ![PostPulse PRO Banner](https://img.shields.io/badge/PostPulse-PRO_v1.0.0-6366F1?style=for-the-badge&logo=rocket&logoColor=white)
+[![Live Demo on Render](https://img.shields.io/badge/Live_Demo-Render_Deployment-10B981?style=for-the-badge&logo=render&logoColor=white)](https://postpulse.onrender.com)
 [![Python Version](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18.0+-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4+-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Tests](https://img.shields.io/badge/Pytest-13%2F13_Passing-success?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
+[![Tests](https://img.shields.io/badge/Pytest-13%2F13_Passing-success?style=for-the-badge&logo=pytest&logoColor=white)](https://pytest.org)
 
 <br />
 
 ### **"Don't just analyze your content. Understand why it works."**
 
 *An AI-powered social media intelligence platform that ingests multi-page PDFs, mobile screenshots, and raw drafts to profile Content DNA, diagnose retention scroll risks, forecast reach deltas, and generate channel-tailored revisions.*
+
+<br />
+
+> 🌐 **Live Working Application**: [https://postpulse.onrender.com](https://postpulse.onrender.com)  
+> 📖 **Interactive Swagger API Docs**: [https://postpulse.onrender.com/docs](https://postpulse.onrender.com/docs)
 
 <br />
 
