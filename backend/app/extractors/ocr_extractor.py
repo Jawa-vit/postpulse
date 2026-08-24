@@ -2,7 +2,7 @@ import io
 import re
 import asyncio
 from typing import Dict, Any
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from PIL import Image, ImageEnhance, ImageOps
 import pytesseract
 from app.core.config import settings
 
@@ -16,10 +16,8 @@ except ImportError:
 class OCRExtractor:
     """
     Universal High-Performance OCR Extractor.
-    Automatically leverages:
-    1. Windows Native AI OCR (Windows.Media.Ocr via winocr) when running on Windows.
-    2. Tesseract OCR (pytesseract) when running in Docker/Linux/Cloud.
-    3. Multi-stage image enhancement and artifact cleanup.
+    1. Async Windows Native AI OCR (Windows.Media.Ocr via winocr) on Windows (~30ms latency).
+    2. Tesseract OCR (pytesseract) on Linux/Docker/Cloud (~300ms latency).
     """
     
     @staticmethod
@@ -32,16 +30,10 @@ class OCRExtractor:
 
     @staticmethod
     def preprocess_image(image: Image.Image) -> Image.Image:
-        """
-        Intelligent image preprocessing:
-        - Downscale oversized images (max 1800px)
-        - Convert to RGB
-        - Autocontrast & slight unsharp sharpening
-        """
         if image.mode != "RGB":
             image = image.convert("RGB")
 
-        max_dim = 1800
+        max_dim = 1600
         w, h = image.size
         if max(w, h) > max_dim:
             scale = max_dim / float(max(w, h))
@@ -49,7 +41,6 @@ class OCRExtractor:
             new_h = int(h * scale)
             image = image.resize((new_w, new_h), Image.Resampling.BILINEAR)
 
-        # Grayscale + autocontrast
         gray = image.convert("L")
         auto_contrast = ImageOps.autocontrast(gray, cutoff=2)
         enhancer = ImageEnhance.Contrast(auto_contrast)
@@ -57,44 +48,27 @@ class OCRExtractor:
         return enhanced.convert("RGB")
 
     @classmethod
-    def extract_from_bytes(cls, file_bytes: bytes, filename: str = "image.png") -> Dict[str, Any]:
+    async def extract_from_bytes_async(cls, file_bytes: bytes, filename: str = "image.png") -> Dict[str, Any]:
         try:
             image = Image.open(io.BytesIO(file_bytes))
             orig_w, orig_h = image.size
             format_name = image.format or "PNG"
 
             extracted_text = ""
-            engine_used = "Standard Extractor"
+            engine_used = "Text Parser"
 
-            # 1. Try Windows Native OCR if on Windows
+            # 1. Native Windows AI OCR (Fast direct await in async event loop)
             if HAS_WINOCR:
                 try:
-                    # Run async winocr in current or new event loop
-                    try:
-                        loop = asyncio.get_event_loop()
-                        if loop.is_running():
-                            import concurrent.futures
-                            with concurrent.futures.ThreadPoolExecutor() as pool:
-                                def run_winocr_sync():
-                                    new_loop = asyncio.new_event_loop()
-                                    asyncio.set_event_loop(new_loop)
-                                    res = new_loop.run_until_complete(winocr.recognize_pil(image, 'en'))
-                                    new_loop.close()
-                                    return res
-                                winocr_res = pool.submit(run_winocr_sync).result(timeout=6)
-                        else:
-                            winocr_res = loop.run_until_complete(winocr.recognize_pil(image, 'en'))
-                    except RuntimeError:
-                        winocr_res = asyncio.run(winocr.recognize_pil(image, 'en'))
-
-                    if winocr_res and winocr_res.text:
-                        extracted_text = winocr_res.text
+                    res = await winocr.recognize_pil(image, 'en')
+                    if res and res.text and res.text.strip():
+                        extracted_text = res.text.strip()
                         engine_used = "Windows AI OCR"
                 except Exception:
                     pass
 
-            # 2. Fallback to Tesseract OCR (for Linux/Docker/Render or if Tesseract is installed)
-            if not extracted_text.strip():
+            # 2. Fallback to Tesseract OCR (for Docker / Linux / Render)
+            if not extracted_text:
                 tesseract_ready = cls._configure_pytesseract()
                 if tesseract_ready:
                     processed_img = cls.preprocess_image(image)
@@ -102,19 +76,13 @@ class OCRExtractor:
                         extracted_text = pytesseract.image_to_string(
                             processed_img,
                             config=r'--oem 3 --psm 3 -c preserve_interword_spaces=1',
-                            timeout=8
+                            timeout=6
                         )
                         engine_used = "Tesseract OCR"
                     except Exception:
-                        try:
-                            extracted_text = pytesseract.image_to_string(processed_img, timeout=5)
-                            engine_used = "Tesseract OCR"
-                        except Exception:
-                            pass
+                        pass
 
             clean_text = extracted_text.strip()
-            
-            # Clean OCR noise and artifacts
             clean_text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]', '', clean_text)
             clean_text = re.sub(r'[ \t]+', ' ', clean_text)
             clean_text = re.sub(r'\n{3,}', '\n\n', clean_text)
@@ -142,3 +110,14 @@ class OCRExtractor:
                 "word_count": 0,
                 "character_count": 0
             }
+
+    @classmethod
+    def extract_from_bytes(cls, file_bytes: bytes, filename: str = "image.png") -> Dict[str, Any]:
+        """Synchronous wrapper for tests."""
+        try:
+            return asyncio.run(cls.extract_from_bytes_async(file_bytes, filename))
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            res = loop.run_until_complete(cls.extract_from_bytes_async(file_bytes, filename))
+            loop.close()
+            return res

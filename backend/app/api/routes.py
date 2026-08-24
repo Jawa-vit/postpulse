@@ -119,7 +119,7 @@ async def extract_document(
         )
 
     elif is_image:
-        ocr_result = OCRExtractor.extract_from_bytes(file_bytes, filename)
+        ocr_result = await OCRExtractor.extract_from_bytes_async(file_bytes, filename)
         return ExtractResponse(
             success=ocr_result.get("success", False),
             text=ocr_result.get("text", ""),
