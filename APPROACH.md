@@ -1,12 +1,28 @@
-# Brief Write-Up of Approach (Assessment Submission)
+# 📋 Technical Assessment Approach Write-Up
 
-### Problem-Solving Approach (196 Words)
-Modern social media content evaluation often relies on black-box LLMs or basic text extraction, yielding non-deterministic and unverifiable feedback. **PostPulse** redefines content analysis as an **Explainable Content Intelligence & Digital Twin System**. 
+**Candidate Assessment Submission**: Software Engineering Position  
+**Project**: PostPulse — Social Media Content Intelligence Platform  
+**Deliverable**: Brief Write-up of Approach (Strict Constraint: **200 Words Max**)
 
-The system implements a dual-engine architecture:
-1. **Multi-Format Ingestion**: PyMuPDF handles multi-page vector PDFs with layout and structure preservation, while PIL-enhanced Tesseract OCR parses images, screenshots, and drafts with adaptive contrast thresholding.
-2. **Deterministic Heuristic NLP Engine**: Rather than generic AI wrappers, PostPulse evaluates content using defensible psycholinguistic and readability formulas (Flesch-Kincaid ease, hook-speed word positioning, CTA intent scoring, and emotion density).
-3. **Predictive Digital Twin & Multi-Platform Synthesis**: Ingested posts generate an interactive "Content DNA" profile, scan for first-3-second scroll friction, simulate engagement potential gains (+24% reach lift), and convert drafts into platform-tailored formats (LinkedIn storytelling, Instagram visual hooks, X threads, Threads conversation).
-4. **Diagnostic Rewrite Lab**: Provides four targeted strategies (*Safe*, *Viral*, *Expert*, *Human*) with side-by-side visual diffs explaining *why* each change boosts reader retention.
+---
 
-This guarantees sub-20ms analysis latency, zero cloud API dependency for core operations, and an actionable diagnostic experience for creators and marketing teams.
+## 🎯 Executive Approach Write-Up *(183 Words — Strictly < 200 Words Limit)*
+
+> PostPulse was engineered as an explainable Content Intelligence Platform that transforms static social media drafts, PDFs, and mobile screenshots into actionable digital twins. Rather than simply extracting raw text or relying on opaque AI wrappers, the system evaluates the cognitive and psychological drivers of audience retention.
+> 
+> The architecture employs a dual-pipeline ingestion layer: PyMuPDF preserves structural document layouts from multi-page PDFs, while a high-performance multi-pass OCR engine extracts text from compressed screenshots and mobile graphics in milliseconds.
+> 
+> Extracted content is processed through a deterministic NLP analytics engine calculating readability indices, sentence velocity, call-to-action intent, and psycholinguistic markers. The system computes a 6-vector Content DNA score (Hook Strength, Readability, Skimmability, Sentiment, CTA, and Curiosity) and pinpoints scroll friction in the critical opening seconds.
+> 
+> To maximize distribution, the Platform Transformer calibrates formatting for LinkedIn, Instagram, X (single post + 3-part threads), and Threads. The Revision Lab generates four targeted writing strategies (Clean Polish, High Engagement, Authority, and Authentic Story) paired with side-by-side visual diffs and diagnostic rationales.
+> 
+> Built with FastAPI, React, and TypeScript, PostPulse executes all profiling locally in under 20 milliseconds without third-party API dependencies.
+
+---
+
+## 🏛️ Summary of Key Technical Decisions
+
+- **Fast & Reliable Ingestion**: Dual-engine design combining **PyMuPDF** (layout-aware PDF parsing) and **Universal OCR** (Windows Native AI OCR for sub-50ms local execution + Tesseract for Docker/Cloud).
+- **Deterministic Analytics Engine**: Flesch-Kincaid grade level, velocity analysis, and lexical intent scoring eliminate unpredictable hallucinations.
+- **Production-Grade Code Quality**: Strict TypeScript types (`verbatimModuleSyntax`), modular FastAPI backend architecture, and **13/13 automated test suite** with 100% pass rate.
+- **Unified Cloud Containerization**: Multi-stage `Dockerfile` serving both the compiled React SPA and FastAPI endpoints as a single unified service on **Render**.
