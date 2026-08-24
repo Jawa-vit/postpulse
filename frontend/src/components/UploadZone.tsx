@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, FileText, Sparkles, CheckCircle, ArrowRight, RefreshCw, FileCode, CheckCircle2, Loader2 } from 'lucide-react';
+import { UploadCloud, FileText, Sparkles, CheckCircle, ArrowRight, RefreshCw, FileCode, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import type { SamplePost } from '../types';
 import { apiService } from '../services/api';
 
@@ -35,6 +35,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [extractError, setExtractError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -65,6 +66,8 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
 
   const processFile = async (file: File) => {
     setSelectedFile(file);
+    setExtractError(null);
+
     if (file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
       setFilePreviewUrl(url);
@@ -72,8 +75,8 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
       setFilePreviewUrl(null);
     }
 
-    // Auto-extract immediately on upload so analysis is instant!
     setIsExtracting(true);
+
     try {
       const res = await apiService.extractContent(file);
       if (res.success && res.text) {
@@ -85,9 +88,14 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
           charCount: res.character_count,
           engine: res.details?.engine || (res.file_type === 'pdf' ? 'PyMuPDF Parser' : 'Tesseract OCR')
         });
+      } else if (res.text) {
+        // Fallback text available
+        onTextChange(res.text);
+      } else {
+        setExtractError('No text found in file. You can type or paste your post below.');
       }
-    } catch {
-      // User can still type or edit directly
+    } catch (err: any) {
+      setExtractError(err.message || 'Extraction failed. You can type or edit your draft below.');
     } finally {
       setIsExtracting(false);
     }
@@ -95,6 +103,7 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
+    setExtractError(null);
     if (filePreviewUrl) {
       URL.revokeObjectURL(filePreviewUrl);
       setFilePreviewUrl(null);
@@ -223,14 +232,19 @@ export const UploadZone: React.FC<UploadZoneProps> = ({
                   <div className="text-xs text-slate-400">
                     {(selectedFile.size / 1024).toFixed(1)} KB • {selectedFile.type || 'Document'}
                   </div>
-                  <div className="flex items-center space-x-1.5 text-[11px] text-emerald-400 mt-1">
+                  <div className="mt-1">
                     {isExtracting ? (
-                      <div className="flex items-center space-x-1.5 text-indigo-400">
+                      <div className="flex items-center space-x-1.5 text-indigo-400 text-xs">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Extracting document text...</span>
+                        <span>Extracting document text with fast OCR...</span>
+                      </div>
+                    ) : extractError ? (
+                      <div className="flex items-center space-x-1.5 text-amber-400 text-xs">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        <span>{extractError}</span>
                       </div>
                     ) : (
-                      <div className="flex items-center space-x-1.5 text-emerald-400">
+                      <div className="flex items-center space-x-1.5 text-emerald-400 text-xs">
                         <CheckCircle className="w-3.5 h-3.5" />
                         <span>Extracted & Synchronized</span>
                       </div>
